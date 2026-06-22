@@ -1,5 +1,13 @@
-import PagePlaceholder from '../PagePlaceholder.jsx'
+ import PagePlaceholder from '../PagePlaceholder.jsx'
+import React from 'react'
 
-export default function Orders() {
-  return <PagePlaceholder title="Orders" />
+function Orders() {
+  return (
+    <div>
+      <h1> Helooo    order</h1>
+
+    </div>
+  )
 }
+
+export default Orders

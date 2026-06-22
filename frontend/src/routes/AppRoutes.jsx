@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AdminLayout from '../layouts/AdminLayout.jsx'
 import Categories from '../pages/Dashboard/Categories.jsx'
-import Customers from '../pages/Dashboard/Customers.jsx'
+import Customers from '../pages/Costomer/Customers.jsx'
 import Dashboard from '../pages/Dashboard/Dashboard.jsx'
 import Login from '../pages/auth/Login.jsx'
 import Orders from '../pages/Dashboard/Orders.jsx'
