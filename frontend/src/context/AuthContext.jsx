@@ -1,6 +1,5 @@
-import { createContext, useMemo, useState } from 'react'
-
-export const AuthContext = createContext(null)
+import { useMemo, useState } from 'react'
+import { AuthContext } from './AuthContext.js'
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState({ name: 'Admin User', role: 'Manager' })

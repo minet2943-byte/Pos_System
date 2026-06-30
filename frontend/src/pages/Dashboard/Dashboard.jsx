@@ -1,264 +1,275 @@
-import { useState } from "react";
+import { useMemo, useState } from 'react'
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+} from 'recharts'
 
-const monthlyData = [
-  { month: "JAN", value: 20 },
-  { month: "FEB", value: 27 },
-  { month: "MAR", value: 35 },
-  { month: "APR", value: 41 },
-  { month: "MAY", value: 31 },
-  { month: "JUN", value: 47 },
-  { month: "JUL", value: 54 },
-  { month: "AUG", value: 38 },
-  { month: "SEP", value: 44 },
-  { month: "OCT", value: 50 },
-  { month: "NOV", value: 61 },
-  { month: "DEC", value: 41 },
-];
+const chartViews = {
+  Daily: [
+    { label: 'Mon', sales: 12, orders: 18 },
+    { label: 'Tue', sales: 19, orders: 24 },
+    { label: 'Wed', sales: 8, orders: 13 },
+    { label: 'Thu', sales: 25, orders: 31 },
+    { label: 'Fri', sales: 31, orders: 38 },
+    { label: 'Sat', sales: 22, orders: 29 },
+    { label: 'Sun', sales: 15, orders: 20 },
+  ],
+  Monthly: [
+    { label: 'Jan', sales: 20, orders: 72 },
+    { label: 'Feb', sales: 27, orders: 84 },
+    { label: 'Mar', sales: 35, orders: 98 },
+    { label: 'Apr', sales: 41, orders: 112 },
+    { label: 'May', sales: 31, orders: 91 },
+    { label: 'Jun', sales: 47, orders: 128 },
+    { label: 'Jul', sales: 54, orders: 143 },
+    { label: 'Aug', sales: 38, orders: 104 },
+    { label: 'Sep', sales: 44, orders: 116 },
+    { label: 'Oct', sales: 50, orders: 135 },
+    { label: 'Nov', sales: 61, orders: 156 },
+    { label: 'Dec', sales: 41, orders: 111 },
+  ],
+}
 
-const dailyData = [
-  { month: "MON", value: 12 },
-  { month: "TUE", value: 19 },
-  { month: "WED", value: 8 },
-  { month: "THU", value: 25 },
-  { month: "FRI", value: 31 },
-  { month: "SAT", value: 22 },
-  { month: "SUN", value: 15 },
-];
+const recentOrders = [
+  { id: '#ORD-001', customer: 'Sophea Mao', item: 'Beef Noodle', amount: '$24.00', status: 'Completed' },
+  { id: '#ORD-002', customer: 'Dara Chea', item: 'Fried Rice', amount: '$12.50', status: 'Pending' },
+  { id: '#ORD-003', customer: 'Lina Keo', item: 'Spring Rolls', amount: '$8.00', status: 'Completed' },
+  { id: '#ORD-004', customer: 'Vuthy Prak', item: 'Amok Fish', amount: '$18.00', status: 'Preparing' },
+  { id: '#ORD-005', customer: 'Sreymom Ty', item: 'Boba Tea', amount: '$5.50', status: 'Completed' },
+]
 
-const statCards = [
+const inventoryAlerts = [
+  { name: 'Cola Can', stock: 5, target: 28 },
+  { name: 'Hand Soap', stock: 8, target: 20 },
+  { name: 'Orange Juice', stock: 18, target: 32 },
+]
+
+const quickStats = [
   {
-    label: "TOTAL SALES",
-    value: "$12,450",
-    change: "12.5% from last month",
-    color: "#3b82f6",
-    bg: "#dbeafe",
+    icon: 'cash',
+    label: 'Total Sales',
+    value: '$12,450',
+    trend: '+12.5%',
+    helper: 'vs last month',
+    tone: 'teal',
   },
   {
-    label: "TOTAL ORDERS",
-    value: "154",
-    change: "8.2% from last month",
-    color: "#6b7280",
-    bg: "#f3f4f6",
+    icon: 'receipt',
+    label: 'Orders',
+    value: '154',
+    trend: '+8.2%',
+    helper: 'new orders',
+    tone: 'blue',
   },
   {
-    label: "REVENUE",
-    value: "$8,200",
-    change: "5.4% from last month",
-    color: "#10b981",
-    bg: "#d1fae5",
+    icon: 'chart',
+    label: 'Revenue',
+    value: '$8,200',
+    trend: '+5.4%',
+    helper: 'net revenue',
+    tone: 'amber',
   },
   {
-    label: "CUSTOMERS",
-    value: "1,200",
-    change: "1.2% from last month",
-    color: "#94a3b8",
-    bg: "#e2e8f0",
+    icon: 'users',
+    label: 'Customers',
+    value: '1,200',
+    trend: '+1.2%',
+    helper: 'active buyers',
+    tone: 'rose',
   },
-];
+]
 
-const CustomBar = (props) => {
-  const { x, y, width, height, isActive } = props;
+const statusClass = {
+  Completed: 'success',
+  Pending: 'warning',
+  Preparing: 'info',
+}
+
+function DashboardIcon({ name }) {
+  const icons = {
+    cash: (
+      <>
+        <rect x="3" y="7" width="18" height="10" rx="2" />
+        <circle cx="12" cy="12" r="2.3" />
+        <path d="M7 10v4M17 10v4" />
+      </>
+    ),
+    receipt: (
+      <>
+        <path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-3 2-3-2-3 2V5a2 2 0 0 1 2-2z" />
+        <path d="M9 8h6M9 12h6M9 16h4" />
+      </>
+    ),
+    chart: (
+      <>
+        <path d="M4 19V5" />
+        <path d="M4 19h16" />
+        <rect x="7" y="11" width="3" height="5" rx="1" />
+        <rect x="12" y="7" width="3" height="9" rx="1" />
+        <rect x="17" y="9" width="3" height="7" rx="1" />
+      </>
+    ),
+    users: (
+      <>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+        <circle cx="17" cy="9" r="2.5" />
+        <path d="M15.5 15.5A5 5 0 0 1 21 20" />
+      </>
+    ),
+  }
+
   return (
-    <rect
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-      rx={4}
-      ry={4}
-      fill={isActive ? "#2563eb" : "#bfdbfe"}
-    />
-  );
-};
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {icons[name]}
+    </svg>
+  )
+}
+
+function DashboardTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) {
+    return null
+  }
+
+  return (
+    <div className="dashboard-tooltip">
+      <span>{label}</span>
+      <strong>{payload[0].value}k sales</strong>
+    </div>
+  )
+}
 
 export default function Dashboard() {
-  const [view, setView] = useState("Monthly");
-  const data = view === "Monthly" ? monthlyData : dailyData;
-
-  // Highlight the highest bar
-  const maxVal = Math.max(...data.map((d) => d.value));
+  const [view, setView] = useState('Monthly')
+  const data = chartViews[view]
+  const maxSales = useMemo(() => Math.max(...data.map((item) => item.sales)), [data])
 
   return (
-    <div style={{ padding: "24px", background: "#f8fafc", minHeight: "100vh" }}>
-      {/* Stat Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px",
-        }}
-      >
-        {statCards.map((card) => (
-          <div
-            key={card.label}
-            style={{
-              background: "#fff",
-              borderRadius: "12px",
-              padding: "24px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.07)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "#94a3b8",
-                  letterSpacing: "0.08em",
-                }}
-              >
-                {card.label}
-              </span>
-              <div
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "8px",
-                  background: card.bg,
-                }}
-              />
+    <section className="page dashboard-page">
+      <div className="dashboard-summary">
+        <div>
+          <p className="eyebrow">Store overview</p>
+          <h2>Today at a glance</h2>
+        </div>
+        <div className="dashboard-register">
+          <span>Register</span>
+          <strong>Open</strong>
+        </div>
+      </div>
+
+      <div className="dashboard-stats-grid">
+        {quickStats.map((stat) => (
+          <article className={`dashboard-stat-card ${stat.tone}`} key={stat.label}>
+            <div className="dashboard-stat-icon">
+              <DashboardIcon name={stat.icon} />
             </div>
-            <div
-              style={{ fontSize: "28px", fontWeight: 700, color: "#0f172a" }}
-            >
-              {card.value}
+            <div>
+              <span>{stat.label}</span>
+              <strong>{stat.value}</strong>
+              <p>
+                <b>{stat.trend}</b> {stat.helper}
+              </p>
             </div>
-            <div
-              style={{
-                fontSize: "12px",
-                color: card.color,
-                display: "flex",
-                alignItems: "center",
-                gap: "4px",
-              }}
-            >
-              <span>▲</span>
-              <span>{card.change}</span>
-            </div>
-          </div>
+          </article>
         ))}
       </div>
 
-      {/* Sales Overview Chart */}
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "12px",
-          padding: "28px",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.07)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: "24px",
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "#0f172a",
-                margin: 0,
-              }}
-            >
-              Sales Overview
-            </h2>
-            <p style={{ fontSize: "13px", color: "#94a3b8", margin: "4px 0 0" }}>
-              {view === "Monthly"
-                ? "Monthly sales performance"
-                : "Daily sales performance"}
-            </p>
+      <div className="dashboard-grid">
+        <section className="content-panel dashboard-chart-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Sales Overview</h2>
+              <p className="muted">{view === 'Monthly' ? 'Monthly sales performance' : 'Daily sales performance'}</p>
+            </div>
+            <div className="dashboard-segmented" aria-label="Sales chart range">
+              {Object.keys(chartViews).map((option) => (
+                <button
+                  className={view === option ? 'active' : ''}
+                  key={option}
+                  onClick={() => setView(option)}
+                  type="button"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "4px",
-              background: "#f1f5f9",
-              borderRadius: "8px",
-              padding: "4px",
-            }}
-          >
-            {["Daily", "Monthly"].map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  background: view === v ? "#2563eb" : "transparent",
-                  color: view === v ? "#fff" : "#64748b",
-                  transition: "all 0.15s",
-                }}
-              >
-                {v}
-              </button>
+
+          <div className="dashboard-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data} barCategoryGap="34%" margin={{ top: 8, right: 6, left: -18, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke="#e8eef5" />
+                <XAxis
+                  axisLine={false}
+                  dataKey="label"
+                  tick={{ fontSize: 12, fill: '#64748b', fontWeight: 700 }}
+                  tickLine={false}
+                />
+                <YAxis axisLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickLine={false} />
+                <Tooltip content={<DashboardTooltip />} cursor={{ fill: '#f8fafc' }} />
+                <Bar dataKey="sales" radius={[6, 6, 0, 0]}>
+                  {data.map((entry) => (
+                    <Cell fill={entry.sales === maxSales ? '#0f766e' : '#99d8d0'} key={entry.label} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="content-panel dashboard-orders-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Recent Orders</h2>
+              <p className="muted">Latest kitchen and counter activity</p>
+            </div>
+            <button className="dashboard-link-button" type="button">View all</button>
+          </div>
+
+          <div className="dashboard-order-list">
+            {recentOrders.map((order) => (
+              <article className="dashboard-order" key={order.id}>
+                <div>
+                  <strong>{order.customer}</strong>
+                  <span>{order.item} - {order.id}</span>
+                </div>
+                <div>
+                  <b>{order.amount}</b>
+                  <small className={`status-pill ${statusClass[order.status]}`}>{order.status}</small>
+                </div>
+              </article>
             ))}
           </div>
-        </div>
+        </section>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={data}
-            barCategoryGap="30%"
-            margin={{ top: 4, right: 0, left: -10, bottom: 0 }}
-          >
-            <CartesianGrid vertical={false} stroke="#f1f5f9" />
-            <XAxis
-              dataKey="month"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 500 }}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 11, fill: "#94a3b8" }}
-            />
-            <Tooltip
-              cursor={{ fill: "#f8fafc" }}
-              contentStyle={{
-                borderRadius: "8px",
-                border: "1px solid #e2e8f0",
-                fontSize: "12px",
-              }}
-            />
-            <Bar
-              dataKey="value"
-              radius={[4, 4, 0, 0]}
-              shape={(props) => (
-                <CustomBar {...props} isActive={props.value === maxVal} />
-              )}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <section className="content-panel dashboard-alert-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Inventory Watch</h2>
+              <p className="muted">Items moving toward reorder</p>
+            </div>
+          </div>
+          <div className="inventory-alert-list">
+            {inventoryAlerts.map((item) => (
+              <article className="inventory-alert" key={item.name}>
+                <div>
+                  <strong>{item.name}</strong>
+                  <span>{item.stock} left - target {item.target}</span>
+                </div>
+                <meter min="0" max={item.target} value={item.stock}>
+                  {item.stock} of {item.target}
+                </meter>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
-    </div>
-  );
+    </section>
+  )
 }
