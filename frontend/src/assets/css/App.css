@@ -324,7 +324,7 @@ th {
 
 .auth-layout {
   align-items: center;
-  background: var(--bg);
+  background: #FFE4EC;
   display: grid;
   min-height: 100vh;
   padding: 24px;

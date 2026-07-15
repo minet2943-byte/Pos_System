@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../../components/Button/Button.jsx'
 import AuthLayout from '../../layouts/AuthLayout.jsx'
 
+
 function Login({ onCustomerLogin, onStaffLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,43 +23,50 @@ function Login({ onCustomerLogin, onStaffLogin }) {
       return
     }
 
-    setError('Use admin@example.com or customer@example.com')
+    setError('incorrect email or password')
   }
 
-  return (
+return (
+ 
     <AuthLayout>
+   
       <form className="login-panel" onSubmit={handleSubmit}>
         <h1>Login</h1>
+
         <label>
           Email
           <input
-            onChange={(event) => {
-              setEmail(event.target.value)
-              setError('')
-            }}
-            placeholder="admin@example.com"
             type="email"
             value={email}
+            placeholder="admin@example.com"
+            onChange={(event) => {
+              setEmail(event.target.value)
+              setError("")
+            }}
             required
           />
         </label>
+
         <label>
           Password
           <input
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Password"
             type="password"
             value={password}
+            placeholder="Password"
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </label>
+
         {error && <p className="login-error">{error}</p>}
+
         <div className="login-actions">
           <Button type="submit">Login</Button>
         </div>
       </form>
     </AuthLayout>
-  )
+  
+)
 }
 
 export default Login
