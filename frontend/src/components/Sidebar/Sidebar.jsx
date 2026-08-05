@@ -1,11 +1,12 @@
 const menuItems = [
-  'Dashboard',
-  'Products',
-  'Categories',
-  'Orders',
-  'Reports',
-  'Users',
-]
+  "Dashboard",
+  "Products",
+  // "Create Product",
+  "Categories",
+  "Orders",
+  "Reports",
+  "Users",
+];
 
 const sidebarIcons = {
   Dashboard: (
@@ -55,6 +56,12 @@ const sidebarIcons = {
       <path d="M15.5 15.5A5 5 0 0 1 21 20" />
     </svg>
   ),
+  // "Create Product": (
+  //   <svg viewBox="0 0 24 24" aria-hidden="true">
+  //     <path d="M12 5v14" />
+  //     <path d="M5 12h14" />
+  //   </svg>
+  // ),
   Settings: (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="3" />
@@ -68,7 +75,7 @@ const sidebarIcons = {
       <path d="M12 4h7v16h-7" />
     </svg>
   ),
-}
+};
 
 function Sidebar({ activePage, onLogout, onNavigate }) {
   return (
@@ -80,7 +87,7 @@ function Sidebar({ activePage, onLogout, onNavigate }) {
       <nav className="sidebar-nav" aria-label="Main navigation">
         {menuItems.map((item) => (
           <button
-            className={activePage === item ? 'active' : ''}
+            className={activePage === item ? "active" : ""}
             key={item}
             onClick={() => onNavigate(item)}
             type="button"
@@ -91,10 +98,13 @@ function Sidebar({ activePage, onLogout, onNavigate }) {
         ))}
       </nav>
 
-      <nav className="sidebar-nav sidebar-account-nav" aria-label="Account navigation">
+      <nav
+        className="sidebar-nav sidebar-account-nav"
+        aria-label="Account navigation"
+      >
         <button
-          className={activePage === 'Settings' ? 'active' : ''}
-          onClick={() => onNavigate('Settings')}
+          className={activePage === "Settings" ? "active" : ""}
+          onClick={() => onNavigate("Settings")}
           type="button"
         >
           <span className="sidebar-icon">{sidebarIcons.Settings}</span>
@@ -106,7 +116,7 @@ function Sidebar({ activePage, onLogout, onNavigate }) {
         </button>
       </nav>
     </aside>
-  )
+  );
 }
 
-export default Sidebar
+export default Sidebar;

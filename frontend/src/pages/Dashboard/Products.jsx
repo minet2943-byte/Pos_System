@@ -1,108 +1,104 @@
-import { useState } from 'react'
-import Table from '../../components/Table/Table.jsx'
-import { formatCurrency } from '../../utils/currency.js'
+import Table from "../../components/Table/Table.jsx";
+import { formatCurrency } from "../../utils/currency.js";
+import { useProducts } from "../../context/ProductContext.jsx";
 
-const lowStockLimit = 10
-
-const initialProducts = [
-  { id: 'PRD-1001', name: 'Mineral Water', category: 'Beverages', price: 1, stock: 42 },
-  { id: 'PRD-1002', name: 'Cola Can', category: 'Beverages', price: 0.99, stock: 5 },
-  { id: 'PRD-1003', name: 'Orange Juice', category: 'Beverages', price: 2, stock: 18 },
-  { id: 'PRD-1004', name: 'Iced Tea', category: 'Beverages', price: 1.5, stock: 24 },
-  { id: 'PRD-1005', name: 'Potato Chips', category: 'Snacks', price: 1.25, stock: 16 },
-  { id: 'PRD-1006', name: 'Instant Noodles', category: 'Food', price: 2.5, stock: 22 },
-  { id: 'PRD-1007', name: 'Hand Soap', category: 'Household', price: 1.24, stock: 8 },
-]
-
-const emptyProduct = {
-  name: '',
-  category: '',
-  price: '',
-  stock: '',
-}
+const lowStockLimit = 10;
 
 function getTopCategory(products) {
   const categoryCounts = products.reduce((counts, item) => {
-    counts[item.category] = (counts[item.category] ?? 0) + 1
-    return counts
-  }, {})
+    counts[item.category] = (counts[item.category] ?? 0) + 1;
+    return counts;
+  }, {});
 
-  return Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'No category'
+  return (
+    Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+    "No category"
+  );
 }
 
 function getProductStats(products) {
-  const totalProducts = products.length
-  const lowStockCount = products.filter((item) => item.stock <= lowStockLimit).length
-  const totalPrice = products.reduce((sum, item) => sum + item.price, 0)
-  const averagePrice = totalProducts > 0 ? totalPrice / totalProducts : 0
+  const totalProducts = products.length;
+  const lowStockCount = products.filter(
+    (item) => item.stock <= lowStockLimit,
+  ).length;
+  const totalPrice = products.reduce((sum, item) => sum + item.price, 0);
+  const averagePrice = totalProducts > 0 ? totalPrice / totalProducts : 0;
 
   return [
     {
-      icon: 'CL',
-      label: 'TOTAL PRODUCTS',
-      tone: 'blue',
+      icon: "CL",
+      label: "TOTAL PRODUCTS",
+      tone: "blue",
       value: totalProducts,
-      helper: 'Products available',
+      helper: "Products available",
     },
     {
-      icon: '!',
-      label: 'LOW STOCK',
-      tone: 'red',
+      icon: "!",
+      label: "LOW STOCK",
+      tone: "red",
       value: `${lowStockCount} out of ${totalProducts}`,
-      helper: 'Need restock',
+      helper: "Need restock",
     },
     {
-      icon: 'BZ',
-      label: 'TOP CATEGORY',
-      tone: 'blue',
+      icon: "BZ",
+      label: "TOP CATEGORY",
+      tone: "blue",
       value: getTopCategory(products),
-      helper: 'Most products in this category',
+      helper: "Most products in this category",
     },
     {
-      icon: '$',
-      label: 'AVERAGE PRICE',
-      tone: 'green',
+      icon: "$",
+      label: "AVERAGE PRICE",
+      tone: "green",
       value: formatCurrency(averagePrice),
-      helper: 'Average Product Price',
+      helper: "Average Product Price",
     },
-  ]
+  ];
 }
 
-function Products() {
-  const [product, setProduct] = useState(emptyProduct)
-  const [products, setProducts] = useState(initialProducts)
-  const stats = getProductStats(products)
+function Products({ onNavigate }) {
+  const { products, deleteProduct, setEditingProductId, clearEditingProduct } =
+    useProducts();
+  const stats = getProductStats(products);
 
-  function handleProductChange(event) {
-    const { name, value } = event.target
-    setProduct((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  function handleCreateProduct() {
+    clearEditingProduct();
+    onNavigate?.("Create Product");
   }
 
-  function handleProductSubmit(event) {
-    event.preventDefault()
+  function handleEdit(productId) {
+    setEditingProductId(productId);
+    onNavigate?.("Create Product");
+  }
 
-    const newProduct = {
-      id: `PRD-${1000 + products.length + 1}`,
-      name: product.name.trim(),
-      category: product.category,
-      price: Number(product.price),
-      stock: Number(product.stock),
+  function handleDelete(id) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
+
+    if (!confirmed) {
+      return;
     }
 
-    setProducts((prev) => [newProduct, ...prev])
-    setProduct(emptyProduct)
+    deleteProduct(id);
+    window.alert("Product deleted successfully.");
   }
 
   return (
     <section className="page">
+      <div className="page-header">
+        <div>
+          <h2>Products</h2>
+        </div>
+      </div>
 
       {/* STATS */}
       <div className="stats-grid">
         {stats.map((stat) => (
-          <article className={`stat-card product-stat-card ${stat.tone}`} key={stat.label}>
+          <article
+            className={`stat-card product-stat-card ${stat.tone}`}
+            key={stat.label}
+          >
             <div className="stat-card-header">
               <span>{stat.label}</span>
               <span className="stat-icon" aria-hidden="true">
@@ -115,75 +111,70 @@ function Products() {
         ))}
       </div>
 
-      {/* PRODUCT FORM */}
-      <section className="content-panel product-panel">
-        <h2>Create Product</h2>
+      <div className="product-action-row">
+        <button
+          type="button"
+          className="btn btn-primary create-product-button"
+          onClick={handleCreateProduct}
+        >
+          Create Product
+        </button>
+      </div>
 
-        <form className="product-form" onSubmit={handleProductSubmit}>
-          <input
-            name="name"
-            value={product.name}
-            onChange={handleProductChange}
-            placeholder="Product name"
-            required
-          />
-
-          <select
-            name="category"
-            value={product.category}
-            onChange={handleProductChange}
-            required
-          >
-            <option value="">Select category</option>
-            <option value="Beverages">Beverages</option>
-            <option value="Snacks">Snacks</option>
-            <option value="Food">Food</option>
-            <option value="Household">Household</option>
-            <option value="Accessories">Accessories</option>
-          </select>
-
-          <input
-            name="price"
-            type="number"
-            step="0.01"
-            value={product.price}
-            onChange={handleProductChange}
-            placeholder="Price"
-            required
-          />
-
-          <input
-            name="stock"
-            type="number"
-            value={product.stock}
-            onChange={handleProductChange}
-            placeholder="Stock"
-            required
-          />
-
-          <button type="submit" className="btn btn-primary">
-            Add Product
-          </button>
-        </form>
-
-        {/* PRODUCTS TABLE */}
-        <Table
-          columns={[
-            { key: 'id', label: 'Product ID' },
-            { key: 'name', label: 'Product Name' },
-            { key: 'category', label: 'Category' },
-            { key: 'price', label: 'Price' },
-            { key: 'stock', label: 'Stock' },
-          ]}
-          rows={products.map(p => ({
-            ...p,
-            price: formatCurrency(p.price),
-          }))}
-        />
-      </section>
-
+      {/* PRODUCTS TABLE */}
+      <Table
+        columns={[
+          { key: "id", label: "Product ID" },
+          {
+            key: "image",
+            label: "Image",
+            render: (row) => (
+              <img
+                src={row.image}
+                alt={row.name}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 8,
+                  objectFit: "cover",
+                }}
+              />
+            ),
+          },
+          { key: "name", label: "Product Name" },
+          { key: "category", label: "Category" },
+          { key: "price", label: "Price" },
+          { key: "stock", label: "Stock" },
+          {
+            key: "actions",
+            label: "Actions",
+            render: (row) => (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary bg-blue-500 hover:bg-blue-600"
+                  onClick={() => handleEdit(row.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger bg-red-500 hover:bg-red-600"
+                  onClick={() => handleDelete(row.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            ),
+          },
+        ]}
+        rows={products.map((p) => ({
+          ...p,
+          price: formatCurrency(p.price),
+        }))}
+      />
     </section>
-  )
+  );
 }
 
-export default Products
+export default Products;

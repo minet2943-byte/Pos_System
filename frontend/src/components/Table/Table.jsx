@@ -13,14 +13,18 @@ function Table({ columns, rows }) {
           {rows.map((row) => (
             <tr key={row.id}>
               {columns.map((column) => (
-                <td key={column.key}>{row[column.key]}</td>
+                <td key={column.key}>
+                  {typeof column.render === "function"
+                    ? column.render(row)
+                    : row[column.key]}
+                </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
+  );
 }
 
-export default Table
+export default Table;
