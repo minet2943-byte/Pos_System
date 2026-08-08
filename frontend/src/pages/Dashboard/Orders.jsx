@@ -439,7 +439,7 @@ function DetailModal({ order, onClose }) {
           backgroundColor: "#fff",
           borderRadius: 16,
           padding: 32,
-          width: 360,
+          width: 60,
           boxShadow: "0 16px 48px rgba(0,0,0,0.18)",
           position: "relative",
         }}

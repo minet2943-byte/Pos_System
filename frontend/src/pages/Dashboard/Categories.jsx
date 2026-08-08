@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import Table from '../../components/Table/Table.jsx'
+import { useMemo, useState } from "react";
+import Table from "../../components/Table/Table.jsx";
 
 const categoriesStyles = `
 .category-panel {
@@ -9,19 +9,44 @@ const categoriesStyles = `
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.category-panel-header {
+.category-panel-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.category-panel-top h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.panel-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.category-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-.category-panel-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
+.status-filter {
+  min-width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #e2e4e8;
+  border-radius: 14px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
 }
 
 .search-input {
@@ -91,11 +116,11 @@ const categoriesStyles = `
 }
 
 .btn-primary {
-  background-color: #0f6e5e;
+  background-color: #4f46e5;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 11px 22px;
+  border-radius: 14px;
+  padding: 12px 22px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -103,15 +128,15 @@ const categoriesStyles = `
 }
 
 .btn-primary:hover {
-  background-color: #0c5a4d;
+  background-color: #4338ca;
 }
 
 .btn-secondary {
   background-color: #f0f0f0;
   color: #333;
   border: none;
-  border-radius: 8px;
-  padding: 11px 18px;
+  border-radius: 14px;
+  padding: 12px 22px;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
@@ -123,45 +148,45 @@ const categoriesStyles = `
 }
 
 .categories-panel thead {
-  background: #f4f5f7;
+  background: #fbfbfd;
 }
 
 .categories-panel th {
   text-align: left;
-  padding: 14px 18px;
-  font-weight: 600;
+  padding: 16px 18px;
+  font-weight: 700;
   font-size: 13px;
-  color: #555;
+  color: #374151;
 }
 
 .categories-panel td {
-  padding: 14px 18px;
+  padding: 16px 18px;
   border-top: 1px solid #f0f0f0;
   font-size: 14px;
-  color: #2255aa;
+  color: #1f2937;
 }
 
 .categories-panel tbody tr:hover {
-  background: #fafbfc;
+  background: #f9fafb;
 }
 
 /* Status badges */
 .badge {
   display: inline-block;
-  padding: 4px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
-  text-transform: lowercase;
+  text-transform: capitalize;
 }
 
 .badge-active {
-  background-color: #2f6e2f;
+  background-color: #1f9d55;
 }
 
 .badge-inactive {
-  background-color: #8a8a8a;
+  background-color: #6b7280;
 }
 
 .badge-button {
@@ -177,108 +202,168 @@ const categoriesStyles = `
 }
 
 .btn-edit {
-  background-color: #7a9a3a;
+  background-color: #3b82f6;
   color: #fff;
   border: none;
   border-radius: 999px;
-  padding: 5px 16px;
+  padding: 8px 18px;
   font-size: 13px;
   cursor: pointer;
 }
 
 .btn-delete {
-  background-color: #e3263b;
+  background-color: #ef4444;
   color: #fff;
   border: none;
   border-radius: 999px;
-  padding: 5px 16px;
+  padding: 8px 18px;
   font-size: 13px;
   cursor: pointer;
 }
-`
 
-const emptyCategory = {
-  name: '',
-  product: '',
-  status: 'active',
-  sortOrder: '',
+.entries-info {
+  margin-top: 18px;
+  color: #6b7280;
+  font-size: 13px;
 }
 
+.pagination {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination button {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.pagination button.active,
+.pagination button:hover {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+`;
+
+const emptyCategory = {
+  name: "",
+  product: "",
+  status: "active",
+  sortOrder: "",
+};
+
 const initialCategories = [
-  { id: 'CAT-1001', name: 'Sunscream', product: 10, status: 'active', sortOrder: 12 },
-  { id: 'CAT-1002', name: 'Sunscream', product: 10, status: 'active', sortOrder: 12 },
-  { id: 'CAT-1003', name: 'Sunscream', product: 10, status: 'active', sortOrder: 12 },
-]
+  {
+    id: "CAT-1001",
+    name: "Sunscream",
+    product: 10,
+    status: "active",
+    sortOrder: 12,
+  },
+  {
+    id: "CAT-1002",
+    name: "Sunscream",
+    product: 10,
+    status: "active",
+    sortOrder: 12,
+  },
+  {
+    id: "CAT-1003",
+    name: "Sunscream",
+    product: 10,
+    status: "active",
+    sortOrder: 12,
+  },
+];
 
 function StatusBadge({ status }) {
-  return <span className={`badge badge-${status}`}>{status}</span>
+  return <span className={`badge badge-${status}`}>{status}</span>;
 }
 
 function Categories() {
-  const [categories, setCategories] = useState(initialCategories)
-  const [category, setCategory] = useState(emptyCategory)
-  const [search, setSearch] = useState('')
-  const [editingId, setEditingId] = useState(null)
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [categories, setCategories] = useState(initialCategories);
+  const [category, setCategory] = useState(emptyCategory);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [editingId, setEditingId] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const filteredCategories = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    if (!query) return categories
-
-    return categories.filter(
-      (item) =>
+    const query = search.trim().toLowerCase();
+    return categories.filter((item) => {
+      const matchesSearch =
         item.id.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query)
-    )
-  }, [categories, search])
+        item.name.toLowerCase().includes(query);
+
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [categories, search, statusFilter]);
 
   function handleCategoryChange(event) {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setCategory((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
   }
 
   function handleOpenCreate() {
-    setEditingId(null)
-    setCategory(emptyCategory)
-    setIsFormOpen(true)
+    setEditingId(null);
+    setCategory(emptyCategory);
+    setIsFormOpen(true);
   }
 
   function handleEdit(item) {
-    setEditingId(item.id)
+    setEditingId(item.id);
     setCategory({
       name: item.name,
       product: item.product,
       status: item.status,
       sortOrder: item.sortOrder,
-    })
-    setIsFormOpen(true)
+    });
+    setIsFormOpen(true);
   }
 
   function handleDelete(id) {
-    setCategories((prev) => prev.filter((item) => item.id !== id))
+    setCategories((prev) => prev.filter((item) => item.id !== id));
   }
 
   function handleToggleStatus(id) {
     setCategories((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, status: item.status === 'active' ? 'inactive' : 'active' }
-          : item
-      )
-    )
+          ? {
+              ...item,
+              status: item.status === "active" ? "inactive" : "active",
+            }
+          : item,
+      ),
+    );
   }
 
   function handleCancelForm() {
-    setIsFormOpen(false)
-    setEditingId(null)
-    setCategory(emptyCategory)
+    setIsFormOpen(false);
+    setEditingId(null);
+    setCategory(emptyCategory);
   }
 
   function handleCategorySubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
     if (editingId) {
       setCategories((prev) =>
@@ -291,9 +376,9 @@ function Categories() {
                 status: category.status,
                 sortOrder: Number(category.sortOrder) || 0,
               }
-            : item
-        )
-      )
+            : item,
+        ),
+      );
     } else {
       const newCategory = {
         id: `CAT-${1000 + categories.length + 1}`,
@@ -301,13 +386,13 @@ function Categories() {
         product: Number(category.product) || 0,
         status: category.status,
         sortOrder: Number(category.sortOrder) || 0,
-      }
-      setCategories((prev) => [newCategory, ...prev])
+      };
+      setCategories((prev) => [newCategory, ...prev]);
     }
 
-    setIsFormOpen(false)
-    setEditingId(null)
-    setCategory(emptyCategory)
+    setIsFormOpen(false);
+    setEditingId(null);
+    setCategory(emptyCategory);
   }
 
   return (
@@ -315,6 +400,22 @@ function Categories() {
       <style>{categoriesStyles}</style>
 
       <section className="category-panel">
+        <div className="category-panel-top ">
+          <div>
+            <h2>Categories</h2>
+            <p className="panel-subtitle">Manage your product categories</p>
+          </div>
+          {!isFormOpen && (
+            <button
+              type="button"
+              className="btn-primary "
+              onClick={handleOpenCreate}
+            >
+              + New Category
+            </button>
+          )}
+        </div>
+
         <div className="category-panel-header">
           <div className="search-input">
             <span className="search-icon" aria-hidden="true">
@@ -328,11 +429,16 @@ function Categories() {
             />
           </div>
 
-          {!isFormOpen && (
-            <button type="button" className="btn-primary" onClick={handleOpenCreate}>
-              + New Category
-            </button>
-          )}
+          <select
+            className="status-filter"
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            aria-label="Filter categories by status"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
         </div>
 
         {/* CATEGORY FORM */}
@@ -379,9 +485,13 @@ function Categories() {
 
             <div className="form-actions">
               <button type="submit" className="btn-primary">
-                {editingId ? 'Save Changes' : 'Add Category'}
+                {editingId ? "Save Changes" : "Add Category"}
               </button>
-              <button type="button" className="btn-secondary" onClick={handleCancelForm}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleCancelForm}
+              >
                 Cancel
               </button>
             </div>
@@ -392,12 +502,12 @@ function Categories() {
         <div className="categories-panel">
           <Table
             columns={[
-              { key: 'id', label: 'Category ID' },
-              { key: 'name', label: 'Category Name' },
-              { key: 'product', label: 'Products' },
-              { key: 'status', label: 'Status' },
-              { key: 'sortOrder', label: 'Sort Order' },
-              { key: 'actions', label: 'Action' },
+              { key: "id", label: "Category ID" },
+              { key: "name", label: "Category Name" },
+              { key: "product", label: "Products" },
+              { key: "status", label: "Status" },
+              { key: "sortOrder", label: "Sort Order" },
+              { key: "actions", label: "Action" },
             ]}
             rows={filteredCategories.map((item) => ({
               ...item,
@@ -425,16 +535,30 @@ function Categories() {
                     className="btn-delete"
                     onClick={() => handleDelete(item.id)}
                   >
-                    delete
+                    Delete
                   </button>
                 </div>
               ),
             }))}
           />
+
+          <div className="entries-info">
+            Showing {filteredCategories.length} of {categories.length} entries
+          </div>
+
+          <div className="pagination">
+            <button type="button" disabled>
+              ‹
+            </button>
+            <button type="button" className="active">
+              1
+            </button>
+            <button type="button">›</button>
+          </div>
         </div>
       </section>
     </section>
-  )
+  );
 }
 
-export default Categories
+export default Categories;

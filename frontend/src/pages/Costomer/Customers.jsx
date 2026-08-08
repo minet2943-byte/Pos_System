@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import useAuth from "../../hooks/useAuth.js";
 import { formatCurrency } from "../../utils/currency.js";
 import qrCodeImage from "../../assets/images/image.png";
+import logo from "../../assets/images/logo_pos.jpg";
 
 const categories = [
   "All Products",
@@ -26,7 +27,7 @@ const products = [
     Stock: 200,
     price: 5.99,
     stock: 20,
-    img: "https://i.pinimg.com/1200x/49/38/ac/4938ac66d8613889809cd386ff2554a8.jpg",
+    img: "https://i.pinimg.com/736x/75/ae/c4/75aec41b719aac39e37b03b70f37c2a4.jpg",
   },
   {
     name: "Round Lab SC",
@@ -96,7 +97,7 @@ const products = [
     category: "Sun Screen",
     price: 8.5,
     stock: 180,
-    img: "https://i.pinimg.com/1200x/73/aa/07/73aa073da4f211ba62c8445dcc1bcaed.jpg",
+    img: "https://i.pinimg.com/1200x/e4/74/52/e47452d01cc84a108917e90434a14777.jpg",
   },
   {
     name: "Anua Heartleaf Serum",
@@ -106,11 +107,102 @@ const products = [
     img: "https://i.pinimg.com/736x/fa/28/6b/fa286b843041039ece544bd11bd30129.jpg",
   },
   {
+    name: "Dear Klairs Freshly Juiced Vitamin Drop",
+    category: "Serum",
+    price: 15.0,
+    stock: 170,
+    img: "https://i.pinimg.com/736x/58/9b/f8/589bf8be21e012f3e7cadfef26255d14.jpg",
+  },
+  {
+    name: "The Ordinary Niacinamide Serum",
+    category: "Serum",
+    price: 11.5,
+    stock: 138,
+    img: "https://i.pinimg.com/736x/75/25/58/75255820039d311db465ac20dfff1841.jpg",
+  },
+  {
+    name: "La Roche-Posay Hyalu B5 Serum",
+    category: "Serum",
+    price: 18.0,
+    stock: 88,
+    img: "https://i.pinimg.com/736x/07/25/7e/07257ef1a55b5ae88b81e1c80a7c7bab.jpg",
+  },
+  {
+    name: "Missha Time Revolution Serum",
+    category: "Serum",
+    price: 19.5,
+    stock: 72,
+    img: "https://i.pinimg.com/736x/53/8b/25/538b253f2c8339381940963740acdeda.jpg",
+  },
+  {
+    name: "Hada Labo Gokujyun Serum",
+    category: "Serum",
+    price: 13.0,
+    stock: 95,
+    img: "https://i.pinimg.com/736x/2f/16/40/2f1640fa28e8403b46702244ea759851.jpg",
+  },
+  {
+    name: "Cosrx Snail Mucin Serum",
+    category: "Serum",
+    price: 16.0,
+    stock: 104,
+    img: "https://i.pinimg.com/736x/40/d0/f3/40d0f3b850e780649852b847a509c999.jpg",
+  },
+  {
     name: "Blue Hyaluronic Mask",
     category: "Sheet Mask",
     price: 2.5,
     stock: 340,
     img: "https://i.pinimg.com/736x/2d/8e/4b/2d8e4b6b399dadc54b82546e8faec26a.jpg",
+  },
+  {
+    name: "Mediheal N.M.F Aquaring Mask",
+    category: "Sheet Mask",
+    price: 2.8,
+    stock: 310,
+    img: "https://i.pinimg.com/736x/27/fe/0e/27fe0eae9140d6c5c8d8b787d8a35f49.jpg",
+  },
+  {
+    name: "Papa Recipe Honey Mask",
+    category: "Sheet Mask",
+    price: 3.0,
+    stock: 260,
+    img: "https://i.pinimg.com/1200x/69/ea/c3/69eac3d1060ec0becb75aeaaa4fd499b.jpg",
+  },
+  {
+    name: "Dr.Jart+ Water Jet Mask",
+    category: "Sheet Mask",
+    price: 3.5,
+    stock: 220,
+    img: "https://i.pinimg.com/1200x/96/ed/71/96ed71701c629dcd4cd7408cdf962629.jpg",
+  },
+  {
+    name: "TonyMoly Rose Mask",
+    category: "Sheet Mask",
+    price: 2.6,
+    stock: 280,
+    img: "https://i.pinimg.com/1200x/1f/5b/a2/1f5ba2480ac05e1550635b9533190dbd.jpg",
+  },
+  {
+    name: "Neogen Fresh Mask",
+    category: "Sheet Mask",
+    price: 3.2,
+    stock: 190,
+    img: "https://i.pinimg.com/736x/98/e5/0b/98e50b794f054d22a874828a173e8ccb.jpg",
+  },
+  {
+    name: "Etude House Air Mask",
+    category: "Sheet Mask",
+    price: 2.4,
+    stock: 320,
+    img: "https://i.pinimg.com/736x/55/5a/f3/555af370038d56f962deb9d935aeccaa.jpg",
+  },
+  {
+    name: "The Face Shop Real Nature Mask",
+    category: "Sheet Mask",
+    price: 2.7,
+    stock: 275,
+    img: "https://i.pinimg.com/1200x/c9/7a/1b/c97a1bdc769e70b42c9265fdf9cd7724.jpg",
   },
   {
     name: "Low PH Gel Cleanser",
@@ -125,6 +217,48 @@ const products = [
     price: 9.0,
     stock: 120,
     img: "https://i.pinimg.com/736x/9f/53/a8/9f53a80acee12616eaddd52217388860.jpg",
+  },
+  {
+    name: "CeraVe Hydrating Cleanser",
+    category: "Cleanser",
+    price: 10.5,
+    stock: 180,
+    img: "https://i.pinimg.com/736x/62/80/30/6280309087b725804130901a5ba2b072.jpg",
+  },
+  {
+    name: "Neutrogena Hydro Boost Cleanser",
+    category: "Cleanser",
+    price: 8.25,
+    stock: 160,
+    img: "https://i.pinimg.com/736x/31/fd/b1/31fdb11ea81750819bc8f900bf8fe128.jpg",
+  },
+  {
+    name: "Klairs Moist Foam Cleanser",
+    category: "Cleanser",
+    price: 12.0,
+    stock: 135,
+    img: "https://i.pinimg.com/736x/6c/7d/cf/6c7dcf881bf01c71da58b7a3ac71c9a3.jpg",
+  },
+  {
+    name: "Simple Moisturizing Wash",
+    category: "Cleanser",
+    price: 6.5,
+    stock: 210,
+    img: "https://i.pinimg.com/736x/3f/df/fc/3fdffc8dd5341004b61599db3f0c3ea1.jpg",
+  },
+  {
+    name: "Vichy Cleansing Gel",
+    category: "Cleanser",
+    price: 11.0,
+    stock: 140,
+    img: "https://i.pinimg.com/736x/c2/38/6b/c2386bf424986c9a9456385687d51ec2.jpg",
+  },
+  {
+    name: "Benton Honest Cleanser",
+    category: "Cleanser",
+    price: 9.5,
+    stock: 155,
+    img: "https://i.pinimg.com/736x/13/1f/0e/131f0e594ce59c3f7484432672eb26b7.jpg",
   },
 ];
 
@@ -183,7 +317,7 @@ export default function Customers() {
 
     return activeCategory === "All Products"
       ? filteredProducts
-      : filteredProducts.slice(0, 4);
+      : filteredProducts.slice(0, 8);
   }, [activeCategory, searchTerm]);
 
   const subtotal = cartItems.reduce(
@@ -289,7 +423,9 @@ export default function Customers() {
       <div className="customer-pos-shell">
         <header className="customer-pos-header">
           <div className="customer-brand">
-            <span className="customer-brand-icon">POS</span>
+            <span className="customer-brand-icon">
+              <img src={logo} alt="Company Logo" />
+            </span>
             <strong>POS SOMROS</strong>
           </div>
 

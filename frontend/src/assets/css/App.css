@@ -25,12 +25,21 @@
 .brand-mark {
   align-items: center;
   background: var(--primary);
-  border-radius: 8px;
+  border-radius: 50%;
   display: inline-flex;
   font-weight: 800;
   height: 38px;
   justify-content: center;
   width: 38px;
+  overflow: hidden;
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .sidebar-nav {
@@ -467,6 +476,7 @@
 .login-logo {
   border-radius: 50%;
   height: 86px;
+  border: 1px solid var(--border);
   margin-bottom: 12px;
   object-fit: contain;
   width: 86px;
@@ -978,14 +988,22 @@ th {
 .customer-brand-icon {
   align-items: center;
   background: rgba(255, 255, 255, 0.24);
-  border-radius: 8px;
+  border-radius: 50%;
   color: #ffffff;
   display: inline-flex;
   font-size: 12px;
   font-weight: 900;
-  height: 34px;
+  height: 50px;
   justify-content: center;
-  width: 42px;
+  overflow: hidden;
+  width: 50px;
+}
+.customer-brand-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .customer-mode {
@@ -1145,11 +1163,12 @@ th {
 }
 
 .customer-card-image {
+  height: 100%;
   align-items: center;
   background: #fffafa;
   display: grid;
   justify-items: center;
-  overflow: hidden;
+
   padding: 6px;
   position: relative;
 }
@@ -1159,7 +1178,12 @@ th {
   width: 100%;
 }
 .customer-card-image .customer-product-visual img {
-  object-fit: contain;
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: cover;
   object-position: center;
 }
 .customer-new-badge {
@@ -1267,8 +1291,20 @@ th {
 }
 
 .customer-product-visual.has-image {
-  align-items: stretch;
+  align-items: center;
+  justify-items: center;
   padding: 0;
+}
+
+.customer-product-visual.has-image img {
+  display: block;
+  margin: auto;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: center center;
 }
 
 .customer-product-visual.has-image::before,

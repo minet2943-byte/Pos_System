@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Button from '../../components/Button/Button.jsx'
 import AuthLayout from '../../layouts/AuthLayout.jsx'
-import logo from '../../assets/images/logo1.jpg'
+import logo from '../../assets/images/logo_pos.jpg'
 
 const demoUsers = {
   'admin@example.com': { name: 'Admin User', password: 'admin123', role: 'staff' },

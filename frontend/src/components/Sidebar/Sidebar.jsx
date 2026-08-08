@@ -1,3 +1,5 @@
+import React from "react";
+import pi from "../../assets/images/logo_pos.jpg";
 const menuItems = [
   "Dashboard",
   "Products",
@@ -81,7 +83,14 @@ function Sidebar({ activePage, onLogout, onNavigate }) {
   return (
     <aside className="sidebar">
       <div className="brand">
-        <span className="brand-mark">P</span>
+        <span className="brand-mark">
+          <img className="brand-logo "
+            src={pi}
+            alt="Company Logo"
+          />
+        </span>
+        <span className="brand-name">
+        </span>
         <strong>POS System</strong>
       </div>
       <nav className="sidebar-nav" aria-label="Main navigation">

@@ -61,11 +61,11 @@ function CreateProduct({
           required
         >
           <option value="">Select category</option>
-          <option value="Beverages">Beverages</option>
-          <option value="Snacks">Snacks</option>
-          <option value="Food">Food</option>
-          <option value="Household">Household</option>
-          <option value="Accessories">Accessories</option>
+          <option value="Beverages">Sarum</option>
+          <option value="Snacks">SunCreem</option>
+          <option value="Food">Night Screem</option>
+          {/* <option value="Household">Household</option>
+          <option value="Accessories">Accessories</option> */}
         </select>
 
         <input
